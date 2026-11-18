@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Model checkpoints & large binary weights
+models/*
+!models/.gitkeep
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+
+# Outputs and logs
+outputs/*
+!outputs/.gitkeep
+*.log
+
+# Raw datasets (keep raw data uncommitted if large, or commit only small splits/samples)
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/laporgub/.gitkeep
+!data/raw/sp4n/.gitkeep
+!data/raw/synthetic/.gitkeep
+
+# IDE configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db
