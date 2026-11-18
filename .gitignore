@@ -53,7 +53,10 @@ data/raw/*
 !data/raw/.gitkeep
 !data/raw/laporgub/.gitkeep
 !data/raw/sp4n/.gitkeep
+!data/raw/synthetic/
 !data/raw/synthetic/.gitkeep
+!data/raw/synthetic/synthetic_complaints.csv
+!data/raw/synthetic/synthetic_complaints_1000.csv
 
 # IDE configs
 .vscode/
