@@ -1,0 +1,249 @@
+{
+  "generated_at_utc": "2026-11-21T16:15:38.928078+00:00",
+  "sources": [
+    {
+      "source": "sp4n_lapor",
+      "origin": "git:f4c01c94:Dataset/SP4N LAPOR.csv",
+      "path": "data/raw/sp4n/sp4n_lapor.csv",
+      "rows": 1625,
+      "columns": [
+        "userName",
+        "score",
+        "at",
+        "content"
+      ],
+      "score_distribution": {
+        "1": 742,
+        "2": 89,
+        "3": 106,
+        "4": 78,
+        "5": 610
+      }
+    },
+    {
+      "source": "indonesian_campus_complaints",
+      "origin": "hf:YogaSWD/indonesian-campus-complaints",
+      "dir": "data/raw/hf/indonesian_campus_complaints",
+      "splits": {
+        "train": 35640,
+        "validation": 8910
+      },
+      "total_rows": 44550,
+      "columns": [
+        "id",
+        "text_raw",
+        "text_masked",
+        "target_biro",
+        "topic_category",
+        "core_subject",
+        "entities_json",
+        "evidence_span",
+        "priority",
+        "emotion",
+        "linguistic_style"
+      ],
+      "label_summary": {
+        "target_biro": {
+          "PERPUS": 4050,
+          "HUMAS": 4050,
+          "BIMA": 4050,
+          "ULT": 4050,
+          "BAP": 4050,
+          "BKP": 4050,
+          "BTI": 4050,
+          "PPKS": 4050,
+          "BSP": 4050,
+          "BPM": 4050,
+          "BAK": 4050
+        },
+        "topic_category": {
+          "ADM": 12150,
+          "LNN": 8100,
+          "KMH": 4050,
+          "AKD": 4050,
+          "KSJ": 4050,
+          "FAS": 4050,
+          "DSN": 4050,
+          "KEU": 4050
+        },
+        "priority": {
+          "Sedang": 22791,
+          "Tinggi": 16403,
+          "Rendah": 5356
+        },
+        "linguistic_style": {
+          "sarkasme": 7561,
+          "typo_singkatan": 7510,
+          "slang_jakarta": 7508,
+          "campur_kode": 7380,
+          "curhat_panjang": 7338,
+          "formal_santun": 7253
+        }
+      }
+    },
+    {
+      "source": "twitter_indonesia_sarcastic",
+      "origin": "hf:w11wo/twitter_indonesia_sarcastic",
+      "dir": "data/raw/hf/twitter_indonesia_sarcastic",
+      "splits": {
+        "train": 1878,
+        "validation": 268,
+        "test": 538
+      },
+      "total_rows": 2684,
+      "columns": [
+        "tweet",
+        "label"
+      ],
+      "label_summary": {
+        "label": {
+          "0": 2013,
+          "1": 671
+        }
+      }
+    },
+    {
+      "source": "ecommerce_sentiment",
+      "origin": "hf:AIbnuHibban/e-commerce-sentiment-bahasa-indonesia",
+      "dir": "data/raw/hf/ecommerce_sentiment",
+      "splits": {
+        "train": 21840
+      },
+      "total_rows": 21840,
+      "columns": [
+        "comment",
+        "sentiment",
+        "category",
+        "rating",
+        "subset"
+      ],
+      "label_summary": {
+        "sentiment": {
+          "positive": 7480,
+          "negative": 7470,
+          "neutral": 6890
+        },
+        "category": {
+          "null": 17000,
+          "short_vague": 1783,
+          "aspect_based": 1485,
+          "ambiguous": 775,
+          "contextual": 215,
+          "negation": 97,
+          "typos_informal": 93,
+          "mixed_sentiment": 79,
+          "emotional_exaggeration": 77,
+          "question_conditional": 71,
+          "colloquial_slang": 70,
+          "sarcasm": 64,
+          "comparative": 31
+        },
+        "rating": {
+          "3": 6851,
+          "5": 5496,
+          "1": 5325,
+          "2": 2162,
+          "4": 2006
+        },
+        "subset": {
+          "simple": 17000,
+          "challange": 4840
+        }
+      }
+    },
+    {
+      "source": "indonlu_nergrit",
+      "origin": "hf:SEACrowd/indonlu_nergrit (upstream CoNLL/TSV)",
+      "note": "SEACrowd HF repo uses a legacy loading script requiring seacrowd/torchaudio; downloaded directly from its canonical IndoNLU upstream URLs.",
+      "dir": "data/raw/ner/indonlu_nergrit",
+      "files": {
+        "train_preprocess.txt": 1672,
+        "valid_preprocess.txt": 209,
+        "test_preprocess.txt": 209
+      },
+      "total_sentences": 2090,
+      "bio_tags": {
+        "O": 57388,
+        "B-PLACE": 3373,
+        "I-PLACE": 2845,
+        "B-PERSON": 2038,
+        "B-ORGANISATION": 1260,
+        "I-PERSON": 1675,
+        "I-ORGANISATION": 1468
+      }
+    },
+    {
+      "source": "indolem_nerui",
+      "origin": "hf:SEACrowd/indolem_nerui (upstream CoNLL/TSV)",
+      "note": "SEACrowd HF repo uses a legacy loading script; downloaded Fold 1 only from canonical IndoLEM upstream URLs to avoid 5-fold duplication.",
+      "dir": "data/raw/ner/indolem_nerui",
+      "files": {
+        "train.01.tsv": 1530,
+        "dev.01.tsv": 170,
+        "test.01.tsv": 426
+      },
+      "total_sentences": 2126,
+      "bio_tags": {
+        "O": 38488,
+        "B-PERSON": 1870,
+        "B-ORGANIZATION": 1949,
+        "I-ORGANIZATION": 1084,
+        "I-PERSON": 956,
+        "B-LOCATION": 1236,
+        "I-LOCATION": 607
+      }
+    },
+    {
+      "source": "idner_news_2k",
+      "origin": "hf:SEACrowd/idner_news_2k (upstream CoNLL/TSV)",
+      "note": "SEACrowd HF repo uses a legacy loading script; downloaded directly from canonical idner-news-2k upstream URLs.",
+      "dir": "data/raw/ner/idner_news_2k",
+      "files": {
+        "train.txt": 1464,
+        "dev.txt": 367,
+        "test.txt": 509
+      },
+      "total_sentences": 2340,
+      "bio_tags": {
+        "O": 42696,
+        "B-LOC": 834,
+        "B-PER": 1632,
+        "I-LOC": 420,
+        "B-ORG": 1311,
+        "I-ORG": 988,
+        "I-PER": 818
+      }
+    },
+    {
+      "source": "dataset_tweet_sentiment_cellular_service_provider.csv",
+      "origin": "https://raw.githubusercontent.com/rizalespe/Dataset-Sentimen-Analisis-Bahasa-Indonesia/master/dataset_tweet_sentiment_cellular_service_provider.csv",
+      "path": "data/raw/github_rizalespe/dataset_tweet_sentiment_cellular_service_provider.csv",
+      "rows": 300,
+      "columns": [
+        "Id",
+        "Sentiment",
+        "Text Tweet"
+      ],
+      "sentiment_distribution": {
+        "negative": 161,
+        "positive": 139
+      }
+    },
+    {
+      "source": "dataset_tweet_sentiment_pilkada_DKI_2017.csv",
+      "origin": "https://raw.githubusercontent.com/rizalespe/Dataset-Sentimen-Analisis-Bahasa-Indonesia/master/dataset_tweet_sentiment_pilkada_DKI_2017.csv",
+      "path": "data/raw/github_rizalespe/dataset_tweet_sentiment_pilkada_DKI_2017.csv",
+      "rows": 900,
+      "columns": [
+        "Id",
+        "Sentiment",
+        "Pasangan Calon",
+        "Text Tweet"
+      ],
+      "sentiment_distribution": {
+        "negative": 450,
+        "positive": 450
+      }
+    }
+  ]
+}
