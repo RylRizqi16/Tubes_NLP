@@ -126,13 +126,20 @@ def calibrate_weights(
                     metrics = score_config(val_records, cfg)
                     rank_key = (
                         metrics["critical_f1"],
+                        metrics["emergency_recall"],
                         metrics["critical_recall"],
                         -abs(thr - 7.50),
+                        -abs(alpha - 0.20),
                     )
                     if best_overall is None or rank_key > best_overall[0]:
                         best_overall = (rank_key, cfg, metrics)
                     if thr == 7.5:
-                        fixed_key = (metrics["critical_f1"], metrics["critical_recall"])
+                        fixed_key = (
+                            metrics["critical_f1"],
+                            metrics["emergency_recall"],
+                            metrics["critical_recall"],
+                            -abs(alpha - 0.20),
+                        )
                         if best_fixed_75 is None or fixed_key > best_fixed_75[0]:
                             best_fixed_75 = (fixed_key, cfg, metrics)
 

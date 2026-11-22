@@ -34,6 +34,28 @@ SCHEMA_TO_SENTIMENT: Dict[str, str] = {
 }
 
 
+def _select_balanced_real_records(
+    test_records: Sequence[Dict[str, Any]],
+    real_max_samples: int,
+) -> List[Dict[str, Any]]:
+    """
+    Select real civic test records (`sp4n_lapor`, `campus_complaints`) with balanced
+    per-source allocation so `campus_complaints` (which carries domain and urgency labels)
+    is not starved by `sp4n_lapor` appearing first in `master_dataset.jsonl`.
+    """
+    sp4n = [r for r in test_records if r.get("source") == "sp4n_lapor"]
+    campus = [r for r in test_records if r.get("source") == "campus_complaints"]
+    if real_max_samples <= 0 or real_max_samples >= len(sp4n) + len(campus):
+        return sp4n + campus
+
+    half = real_max_samples // 2
+    take_sp4n = min(len(sp4n), half)
+    take_campus = min(len(campus), real_max_samples - take_sp4n)
+    if take_sp4n + take_campus < real_max_samples:
+        take_sp4n = min(len(sp4n), real_max_samples - take_campus)
+    return sp4n[:take_sp4n] + campus[:take_campus]
+
+
 def load_test_records(data_path: Path) -> List[Dict[str, Any]]:
     records: List[Dict[str, Any]] = []
     with data_path.open("r", encoding="utf-8") as f:
@@ -236,10 +258,7 @@ def evaluate_e2e(
 
     test_records = load_test_records(data_path)
     syn_records = [r for r in test_records if r.get("source") == "synthetic"]
-    real_records = [
-        r for r in test_records
-        if r.get("source") in ("sp4n_lapor", "campus_complaints")
-    ][:real_max_samples]
+    real_records = _select_balanced_real_records(test_records, real_max_samples)
 
     syn_t1_preds: List[Dict[str, str]] = []
     syn_t1_objs: List[T1Result] = []

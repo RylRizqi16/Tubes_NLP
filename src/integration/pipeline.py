@@ -19,18 +19,83 @@ from src.task2.predictor import T2Predictor
 from src.task3.predictor import T3Predictor
 
 
+def _torch_transformers_available() -> bool:
+    try:
+        import torch  # noqa: F401
+        import transformers  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def _find_best_t1_seed_dir(exp_dir: Path) -> Optional[Path]:
+    """
+    Resolve a valid T1 transformer seed checkpoint directory containing
+    both `model_weights.pt` and `train_meta.json`.
+    """
+    if not exp_dir.exists():
+        return None
+    if exp_dir.is_file():
+        return exp_dir
+    if (exp_dir / "model_weights.pt").exists() and (exp_dir / "train_meta.json").exists():
+        return exp_dir
+
+    best_seed: Optional[Path] = None
+    best_score = -1.0
+    for cand in sorted(exp_dir.glob("seed_*")):
+        if not cand.is_dir():
+            continue
+        if not ((cand / "model_weights.pt").exists() and (cand / "train_meta.json").exists()):
+            continue
+        score = 0.0
+        try:
+            meta = json.loads((cand / "train_meta.json").read_text(encoding="utf-8"))
+            hist = meta.get("history") or []
+            if hist:
+                score = max(
+                    (float(h.get("val_domain_macro_f1", 0.0)) + float(h.get("val_intent_macro_f1", 0.0))) / 2.0
+                    for h in hist
+                )
+        except Exception:
+            score = 0.0
+        if best_seed is None or score > best_score:
+            best_seed = cand
+            best_score = score
+    return best_seed
+
+
 def resolve_t1_checkpoint(explicit: Optional[Path | str] = None) -> Path:
+    baseline_path = ROOT_DIR / "models" / "task1" / "baseline.joblib"
+    can_use_transformer = _torch_transformers_available()
+
     if explicit is not None:
-        return Path(explicit)
-    candidates = [
-        ROOT_DIR / "models" / "task1" / "E3",
-        ROOT_DIR / "models" / "task1" / "E2",
-        ROOT_DIR / "models" / "task1" / "baseline.joblib",
-    ]
-    for cand in candidates:
-        if cand.exists():
-            return cand
-    return candidates[-1]
+        exp_path = Path(explicit)
+        if exp_path.is_dir():
+            resolved_seed = _find_best_t1_seed_dir(exp_path)
+            if resolved_seed is not None and can_use_transformer:
+                return resolved_seed
+            if resolved_seed is not None and not can_use_transformer and baseline_path.exists():
+                return baseline_path
+        return exp_path
+
+    if can_use_transformer:
+        for exp_name in ("E3", "E2"):
+            seed_dir = _find_best_t1_seed_dir(ROOT_DIR / "models" / "task1" / exp_name)
+            if seed_dir is not None:
+                return seed_dir
+
+    if not baseline_path.exists():
+        # Auto-fit T1 CPU baseline (~5s) if missing so pipeline works out of the box locally
+        from src.task1.data_loader import DEFAULT_DATA
+        from src.task1.train_baseline import run as train_t1_baseline
+
+        train_t1_baseline(
+            DEFAULT_DATA,
+            ROOT_DIR / "models" / "task1",
+            ROOT_DIR / "outputs" / "task1_e1.json",
+        )
+
+    return baseline_path
 
 
 class CivicComplaintPipeline:
@@ -63,7 +128,7 @@ class CivicComplaintPipeline:
         reported_at: Optional[str] = None,
         ablation: str = "full",
         t3_use_negation: bool = True,
-        t3_use_sarcasm: bool = True,
+        t3_use_sarcasm: bool = False,
     ) -> Dict[str, Any]:
         total_t0 = time.perf_counter()
 

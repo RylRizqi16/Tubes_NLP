@@ -285,13 +285,31 @@ class T2Predictor:
         self._lda_stopwords = build_4layer_stopwords()
 
         if backend == "gensim":
-            from gensim.corpora import Dictionary
-            from gensim.models import LdaModel
-            from gensim.models.phrases import Phraser
+            try:
+                from gensim.corpora import Dictionary
+                from gensim.models import LdaModel
+                from gensim.models.phrases import Phraser
 
-            self._lda_model = LdaModel.load(str(self.lda_dir / "lda_gensim.model"))
-            self._lda_dictionary = Dictionary.load(str(self.lda_dir / "dictionary.gensim"))
-            self._lda_phraser = Phraser.load(str(self.lda_dir / "bigram_phraser.gensim"))
+                self._lda_model = LdaModel.load(str(self.lda_dir / "lda_gensim.model"))
+                self._lda_dictionary = Dictionary.load(str(self.lda_dir / "dictionary.gensim"))
+                self._lda_phraser = Phraser.load(str(self.lda_dir / "bigram_phraser.gensim"))
+            except ImportError:
+                sklearn_path = self.lda_dir / "lda_sklearn.joblib"
+                if not sklearn_path.exists():
+                    raise
+                bundle = joblib.load(sklearn_path)
+                self._lda_backend = "sklearn"
+                self._lda_model = bundle["lda_model"]
+                self._lda_vectorizer = bundle["vectorizer"]
+                phraser = PMIBigramPhraser()
+                phraser.bigrams = {tuple(pair) for pair in bundle.get("bigrams", [])}
+                self._lda_phraser = phraser
+                self._lda_meta = {
+                    **meta,
+                    "backend": "sklearn",
+                    "selected_k": int(bundle.get("selected_k", meta.get("selected_k", 15))),
+                    "topics_keywords": bundle.get("topics_keywords", meta.get("topics_keywords", {})),
+                }
         else:
             bundle = joblib.load(self.lda_dir / "lda_sklearn.joblib")
             self._lda_model = bundle["lda_model"]

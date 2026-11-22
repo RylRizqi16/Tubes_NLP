@@ -97,10 +97,16 @@ def load_priority_config(path: Path | str = DEFAULT_WEIGHTS_PATH) -> PriorityCon
 
 
 def _sentiment_intensity_score(t3: T3Result) -> float:
+    sent = str(t3.sentiment).lower()
     if t3.sentiment_score is not None:
-        return min(10.0, max(0.0, float(t3.sentiment_score) * 10.0))
+        raw = min(10.0, max(0.0, float(t3.sentiment_score) * 10.0))
+        if sent == "negative":
+            return max(8.0, raw)
+        if sent == "positive":
+            return min(2.0, raw)
+        return max(3.0, min(5.5, raw))
     fallback = {"negative": 8.5, "neutral": 3.5, "positive": 0.5}
-    return fallback.get(str(t3.sentiment).lower(), 3.5)
+    return fallback.get(sent, 3.5)
 
 
 def _ablation_weights(cfg: PriorityConfig, ablation: str) -> tuple[float, float, float, float]:
@@ -140,7 +146,8 @@ def compute_urgency(
     raw_u = (w1 * c_score + w2 * i_score + w3 * s_score) * (1.0 + alpha * f_flag)
     urgency_index = round(min(10.0, max(0.0, raw_u)), 4)
 
-    if (t1.intent == "Darurat" and urgency_index >= cfg.emergency_threshold) or urgency_index >= 8.8:
+    use_intent = ablation != "no_intent"
+    if (use_intent and t1.intent == "Darurat" and urgency_index >= cfg.emergency_threshold) or urgency_index >= 8.8:
         priority_level = "Emergency"
     elif urgency_index > cfg.escalation_threshold:
         priority_level = "High"
@@ -153,7 +160,7 @@ def compute_urgency(
     sla_hours = SLA_HOURS_BY_PRIORITY[priority_level]
 
     reasons: List[str] = []
-    if t1.intent == "Darurat":
+    if use_intent and t1.intent == "Darurat":
         reasons.append("Intensi darurat terdeteksi")
     if f_flag == 1 and alpha > 0.0:
         reasons.append("Terindikasi sarkasme (eskalasi faktor α)")

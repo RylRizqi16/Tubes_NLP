@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
@@ -22,6 +23,8 @@ REGION_HINTS = (
     "Purwokerto", "Demak", "Kudus", "Pati", "Brebes", "Kebumen", "Jepara",
     "Tegal", "Salatiga", "Pekalongan", "Klaten", "Boyolali", "Wonogiri",
     "Ungaran", "Ambarawa", "Tembalang", "Banyumanik", "Pedurungan", "Genuk",
+    "Gunungpati", "Srondol", "Ngaliyan", "Meteseh", "Tugu", "Bumiayu", "Kroya",
+    "Mranggen", "Kaliwungu", "Sukorejo", "Karanganyar", "Mangkang",
 )
 
 
@@ -43,7 +46,7 @@ def route_agency(domain: str, entities: List[EntitySpan]) -> Dict[str, Any]:
 def infer_admin_region(locations: List[str]) -> str:
     joined = " ".join(locations)
     for region in REGION_HINTS:
-        if region.lower() in joined.lower():
+        if re.search(rf"\b{re.escape(region)}\b", joined, flags=re.IGNORECASE):
             return region
     if locations:
         return locations[0]
